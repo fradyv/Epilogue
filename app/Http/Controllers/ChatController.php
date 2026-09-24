@@ -78,20 +78,26 @@ LARANGAN:
     ];
 
     public function send(Request $request)
-    {
-        $request->validate([
-            'mode'    => 'required|in:resilience,productivity,safety',
-            'message' => 'required|string|max:1000',
-        ]);
+{
+    set_time_limit(120);
 
-        $mode    = $request->input('mode');
-        $message = $request->input('message');
-        $prompt  = $this->systemPrompts[$mode] . "\n\nPesan user: " . $message;
+    $request->validate([
+        'mode'    => 'required|in:resilience,productivity,safety',
+        'message' => 'required|string|max:1000',
+    ]);
 
+    $mode    = $request->input('mode');
+    $message = $request->input('message');
+    $prompt  = $this->systemPrompts[$mode] . "\n\nPesan user: " . $message;
+
+    $maxRetries = 3;
+    $response   = null;
+
+    for ($i = 0; $i < $maxRetries; $i++) {
         $response = Http::withHeaders([
             'Content-Type' => 'application/json',
-        ])->post(
-            'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=' . env('GEMINI_API_KEY'),
+        ])->timeout(60)->post(
+            'https://generativelanguage.googleapis.com/v1beta/models/gemini-3.5-flash:generateContent?key=' . env('GEMINI_API_KEY'),
             [
                 'contents' => [
                     ['parts' => [['text' => $prompt]]]
@@ -99,21 +105,28 @@ LARANGAN:
             ]
         );
 
-        if ($response->failed()) {
-            return response()->json([
-                'error'  => 'Gemini API error',
-                'detail' => $response->json(),
-            ], 500);
-        }
+        if ($response->successful()) break;
 
-        $text      = $response->json('candidates.0.content.parts.0.text') ?? '';
-        $escalate  = str_starts_with($text, '[ESCALATE]');
-        $cleanText = $escalate ? trim(substr($text, strlen('[ESCALATE]'))) : $text;
+        // Tunggu 2 detik sebelum retry
+        sleep(2);
+    }
 
+    if (!$response || $response->failed()) {
         return response()->json([
-            'message'  => $cleanText,
-            'escalate' => $escalate,
+            'message'  => 'Maaf, server sedang sibuk. Silakan coba lagi dalam beberapa detik.',
+            'escalate' => false,
             'mode'     => $mode,
         ]);
     }
+
+    $text      = $response->json('candidates.0.content.parts.0.text') ?? '';
+    $escalate  = str_starts_with($text, '[ESCALATE]');
+    $cleanText = $escalate ? trim(substr($text, strlen('[ESCALATE]'))) : $text;
+
+    return response()->json([
+        'message'  => $cleanText,
+        'escalate' => $escalate,
+        'mode'     => $mode,
+    ]);
+}
 }
