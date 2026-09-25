@@ -1,4 +1,5 @@
 import { Link } from '@inertiajs/react';
+import ConnectWalletButton from '@/Components/ConnectWalletButton.tsx';
 
 const C = {
     cream:     '#FCECD8',
@@ -17,6 +18,7 @@ const STEPS = [
         body: "Epilogue doesn't ask for your email or password. Your privacy is our top priority! Simply use a Web3 Wallet like MetaMask as your 100% secure ad anonymous gateway.",
         img: '/images/herlambang-1.png',
         imgLeft: false,
+        imgH: 360,
     },
     {
         num: '2.',
@@ -24,6 +26,7 @@ const STEPS = [
         body: 'To ensure our Smart Contracts run seamlessly, make sure your wallet is connected to the BOT Chain network. This step guarantees that your chat room is fully decentralized and belongs solely to you.',
         img: '/images/herlambang-2.png',
         imgLeft: true,
+        imgH: 360,
     },
     {
         num: '3.',
@@ -31,6 +34,7 @@ const STEPS = [
         body: "Click the register or login button and approve the signature request in your wallet. It's fast and requires zero gas fees. Once verified, you'll instantly enter your private space to start chatting with Herlambang!",
         img: '/images/herlambang-3.png',
         imgLeft: false,
+        imgH: 460,
     },
 ];
 
@@ -141,12 +145,12 @@ export default function Landing() {
                             <nav style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
                                 <NavPill label="about us" onClick={() => scrollTo('about')} />
                                 <NavPill label="how it works" onClick={() => scrollTo('how-it-works')} />
-                                <NavPill label="login" href="/chat" variant="solid" />
+                                <ConnectWalletButton variant="nav" />
                             </nav>
                         </header>
 
                         {/* ── Hero content ── */}
-                        <section style={{ padding: '10px 56px 130px' }}>
+                        <section style={{ padding: '10px 56px 170px' }}>
                             <div style={{
                                 display: 'flex', alignItems: 'center', gap: '40px',
                                 maxWidth: 1100, margin: '0 auto', flexWrap: 'wrap',
@@ -204,7 +208,7 @@ export default function Landing() {
                 </div>
 
                 {/* ── About Us ── */}
-                <section id="about" style={{ padding: '50px 48px 70px', maxWidth: 1100, margin: '0 auto' }}>
+                <section id="about" style={{ padding: '70px 48px 120px', maxWidth: 1100, margin: '0 auto' }}>
                     <div style={{ background: C.sage, borderRadius: '28px', padding: '36px 48px 48px 28px' }}>
                         <h2 style={{
                             fontFamily: FONT_HEAD, fontSize: '32px', fontWeight: 800,
@@ -256,7 +260,7 @@ export default function Landing() {
                 </section>
 
                 {/* ── How it Works ── */}
-                <section id="how-it-works" style={{ padding: '20px 48px 70px', maxWidth: 1100, margin: '0 auto' }}>
+                <section id="how-it-works" style={{ padding: '40px 48px 130px', maxWidth: 1100, margin: '0 auto' }}>
                     <h2 style={{
                         fontFamily: FONT_HEAD, fontSize: '34px', fontWeight: 800,
                         color: C.brown, textAlign: 'center', marginBottom: '70px',
@@ -264,7 +268,7 @@ export default function Landing() {
                         How it Works
                     </h2>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '90px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '120px' }}>
                         {STEPS.map(step => (
                             <div key={step.num} style={{ position: 'relative' }}>
                                 <span style={{
@@ -308,10 +312,10 @@ export default function Landing() {
                                     </div>
 
                                     <div style={{
-                                        flex: '0 0 220px', display: 'flex', justifyContent: 'center',
-                                        alignSelf: 'flex-end', marginBottom: '-44px',
+                                        flex: `0 0 ${step.imgH + 20}px`, display: 'flex', justifyContent: 'center',
+                                        alignSelf: 'flex-end', marginBottom: `${-Math.round(step.imgH * 0.2)}px`,
                                     }}>
-                                        <CharacterImg src={step.img} alt={step.title} maxH={260} />
+                                        <CharacterImg src={step.img} alt={step.title} maxH={step.imgH} />
                                     </div>
                                 </div>
                             </div>
@@ -319,120 +323,95 @@ export default function Landing() {
                     </div>
                 </section>
 
-                {/* ── CTA + Footer (share one glow so the blur sits behind both) ── */}
-                <div style={{ position: 'relative' }}>
+                {/* ── CTA ── */}
+                <section style={{ padding: '0 48px 100px', maxWidth: 1100, margin: '0 auto' }}>
+                    <div style={{
+                        background: C.sage,
+                        borderRadius: '28px',
+                        padding: '52px 44px',
+                        textAlign: 'center',
+                        boxShadow: `10px 12px 0 0 ${C.olive}`,
+                    }}>
+                        <h2 style={{
+                            fontFamily: FONT_HEAD,
+                            fontSize: 'clamp(24px, 3.5vw, 34px)',
+                            fontWeight: 800, marginBottom: '14px',
+                            ...outlinedText(C.cream, C.brown, '2px'),
+                        }}>
+                            Ready to start a better new chapter?
+                        </h2>
+                        <p style={{
+                            color: C.cream, fontSize: '15px', fontWeight: 700, opacity: 0.95,
+                            marginBottom: '32px', lineHeight: 1.6,
+                        }}>
+                            Connect your wallet now and let Herlambang be your trusted companion today.
+                        </p>
+
+                        <ConnectWalletButton variant="cta" label="Get Started" />
+                    </div>
+                </section>
+
+                {/* ── Footer (blur glow sits below the CTA card, moderately sized) ── */}
+                <footer style={{ position: 'relative', padding: '50px 48px 110px', overflow: 'hidden' }}>
                     <img
                         src="/images/blur-background.png"
                         alt=""
                         aria-hidden
                         style={{
                             position: 'absolute',
-                            top: '160px',
+                            top: '0px',
                             left: '50%',
                             transform: 'translateX(-50%)',
-                            width: '100%',
-                            maxWidth: 1100,
+                            width: '640px',
+                            maxWidth: '85%',
                             zIndex: 0,
                             pointerEvents: 'none',
                         }}
                     />
 
-                    {/* ── CTA ── */}
-                    <section style={{ position: 'relative', zIndex: 1, padding: '0 48px 20px', maxWidth: 1100, margin: '0 auto' }}>
-                        <div style={{
-                            background: C.sage,
-                            borderRadius: '28px',
-                            padding: '52px 44px',
-                            textAlign: 'center',
-                            boxShadow: `10px 12px 0 0 ${C.olive}`,
-                        }}>
-                            <h2 style={{
-                                fontFamily: FONT_HEAD,
-                                fontSize: 'clamp(24px, 3.5vw, 34px)',
-                                fontWeight: 800, marginBottom: '14px',
-                                ...outlinedText(C.cream, C.brown, '2px'),
-                            }}>
-                                Ready to start a better new chapter?
-                            </h2>
-                            <p style={{
-                                color: C.cream, fontSize: '15px', fontWeight: 700, opacity: 0.95,
-                                marginBottom: '32px', lineHeight: 1.6,
-                            }}>
-                                Connect your wallet now and let Herlambang be your trusted companion today.
-                            </p>
+                    <div style={{
+                        position: 'relative', zIndex: 1,
+                        maxWidth: 1100, margin: '0 auto',
+                        paddingTop: '60px',
+                        display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+                        flexWrap: 'wrap', gap: '20px',
+                    }}>
+                        <a
+                            href="https://botchain.ai"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                                background: C.brown,
+                                borderRadius: '999px',
+                                padding: '10px 22px',
+                                display: 'flex', alignItems: 'center',
+                                textDecoration: 'none',
+                            }}
+                        >
+                            <img src="/images/scan-bot-chain-logo.png" alt="BOT" style={{ height: 22 }} />
+                        </a>
 
-                            <Link
-                                href="/chat"
-                                style={{
-                                    display: 'inline-flex',
-                                    alignItems: 'center',
-                                    gap: '12px',
-                                    background: C.cream,
-                                    color: C.brown,
-                                    border: `3px solid ${C.brown}`,
-                                    borderRadius: '999px',
-                                    padding: '18px 56px',
-                                    fontFamily: FONT_HEAD,
-                                    fontSize: '20px',
-                                    fontWeight: 700,
-                                    cursor: 'pointer',
-                                    textDecoration: 'none',
-                                    boxShadow: `5px 7px 0 0 ${C.brown}`,
-                                    transition: 'transform 0.1s',
-                                }}
-                                onMouseDown={e => (e.currentTarget.style.transform = 'translate(3px, 4px)')}
-                                onMouseUp={e => (e.currentTarget.style.transform = 'translate(0,0)')}
-                            >
-                                Get Started
-                                <img src="/images/logo-2.png" alt="" style={{ width: 26, height: 26 }} />
-                            </Link>
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                            <img src="/images/logo.png" alt="" style={{ height: 40 }} />
+                            <img src="/images/epilogue.png" alt="epilogue" style={{ height: 32 }} />
                         </div>
-                    </section>
 
-                    {/* ── Footer ── */}
-                    <footer style={{ position: 'relative', zIndex: 1, padding: '90px 48px 90px' }}>
-                        <div style={{
-                            maxWidth: 1100, margin: '0 auto',
-                            display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-                            flexWrap: 'wrap', gap: '20px',
-                        }}>
-                            <a
-                                href="https://botchain.ai"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                    background: C.brown,
-                                    borderRadius: '999px',
-                                    padding: '10px 22px',
-                                    display: 'flex', alignItems: 'center',
-                                    textDecoration: 'none',
-                                }}
-                            >
-                                <img src="/images/scan-bot-chain-logo.png" alt="BOT" style={{ height: 22 }} />
-                            </a>
-
-                            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                                <img src="/images/logo.png" alt="" style={{ height: 40 }} />
-                                <img src="/images/epilogue.png" alt="epilogue" style={{ height: 32 }} />
-                            </div>
-
-                            <a
-                                href="https://scan.botchain.ai"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                style={{
-                                    background: C.brown,
-                                    borderRadius: '999px',
-                                    padding: '10px 22px',
-                                    display: 'flex', alignItems: 'center',
-                                    textDecoration: 'none',
-                                }}
-                            >
-                                <img src="/images/bot-chain-logo.png" alt="BOT Chain" style={{ height: 22 }} />
-                            </a>
-                        </div>
-                    </footer>
-                </div>
+                        <a
+                            href="https://scan.botchain.ai"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            style={{
+                                background: C.brown,
+                                borderRadius: '999px',
+                                padding: '10px 22px',
+                                display: 'flex', alignItems: 'center',
+                                textDecoration: 'none',
+                            }}
+                        >
+                            <img src="/images/bot-chain-logo.png" alt="BOT Chain" style={{ height: 22 }} />
+                        </a>
+                    </div>
+                </footer>
             </div>
         </>
     );

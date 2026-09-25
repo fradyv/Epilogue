@@ -37,7 +37,9 @@ class HandleInertiaRequests extends Middleware
     {
         return [
             ...parent::share($request),
-            //
+            'auth' => [
+                'wallet' => $request->user()?->wallet_address,
+            ],
         ];
     }
 }

@@ -1,5 +1,8 @@
 import { useState, useRef, useEffect } from 'react';
+import { usePage } from '@inertiajs/react';
 import EscalationBanner from '@/Components/EscalationBanner.tsx';
+import { postJson } from '@/lib/http.ts';
+import { logoutWallet, shortenAddress } from '@/lib/walletAuth.ts';
 
 const C = {
     brown:     '#6B3A10',
@@ -14,9 +17,9 @@ const C = {
 };
 
 const MODES = [
-    { id: 'resilience'  as const, label: 'Resilience',    sub: 'Imposter syndrome & kesehatan mental', icon: '🌱' },
-    { id: 'productivity'as const, label: 'Produktivitas', sub: 'Manajemen waktu & strategi belajar',   icon: '📅' },
-    { id: 'safety'      as const, label: 'Safety Mode',   sub: 'Ruang aman & pelaporan bullying',      icon: '🛡️' },
+    { id: 'resilience'  as const, label: 'Resilience',   sub: 'Imposter syndrome & mental wellness', icon: '🌱' },
+    { id: 'productivity'as const, label: 'Productivity', sub: 'Time management & study strategies',  icon: '📅' },
+    { id: 'safety'      as const, label: 'Safety Mode',  sub: 'Safe space & bullying reporting',     icon: '🛡️' },
 ];
 
 type ModeId = 'resilience' | 'productivity' | 'safety';
@@ -68,7 +71,9 @@ function Bubble({ msg }: { msg: Message }) {
 }
 
 export default function Chat({ mode: initialMode }: Props) {
+    const { auth } = usePage<{ auth: { wallet: string | null } }>().props;
     const [activeMode, setActiveMode] = useState<ModeId>(initialMode || 'resilience');
+    const [loggingOut, setLoggingOut] = useState(false);
     const [messages, setMessages]     = useState<Message[]>([]);
     const [input, setInput]           = useState('');
     const [loading, setLoading]       = useState(false);
@@ -92,18 +97,29 @@ export default function Chat({ mode: initialMode }: Props) {
         if (!input.trim() || loading) return;
 
         const userMsg: Message = { role: 'user', content: input.trim() };
-        setMessages(prev => [...prev, userMsg]);
+        const thread: Message[] = [...messages, userMsg];
+
+        setMessages(thread);
         setInput('');
         setLoading(true);
 
         try {
-            const res = await fetch('/api/chat/send', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ mode: activeMode, message: userMsg.content }),
-            });
+            const res = await postJson('/chat/send', { mode: activeMode, messages: thread });
 
             const data = await res.json();
+
+            if (res.status === 401) {
+                window.location.href = '/';
+                return;
+            }
+
+            if (!res.ok) {
+                setMessages(prev => [...prev, {
+                    role: 'assistant' as const,
+                    content: data.message ?? 'Something went wrong. Please try again.',
+                }]);
+                return;
+            }
 
             setMessages(prev => [...prev, {
                 role: 'assistant' as const,
@@ -115,7 +131,7 @@ export default function Chat({ mode: initialMode }: Props) {
         } catch {
             setMessages(prev => [...prev, {
                 role: 'assistant' as const,
-                content: 'Maaf, terjadi gangguan. Silakan coba lagi.',
+                content: 'Sorry, something went wrong. Please try again.',
             }]);
         } finally {
             setLoading(false);
@@ -167,7 +183,7 @@ export default function Chat({ mode: initialMode }: Props) {
                             Epilogue
                         </p>
                         <p style={{ color: C.olive, fontSize: '11px' }}>
-                            Pilih mode bantuan
+                            Choose a support mode
                         </p>
                     </div>
 
@@ -203,11 +219,41 @@ export default function Chat({ mode: initialMode }: Props) {
                         </button>
                     ))}
 
-                    <div style={{ marginTop: 'auto', paddingTop: '16px' }}>
-                        <div style={{
-                            width: '8px', height: '8px',
-                            borderRadius: '50%', background: C.brown, marginLeft: 'auto',
-                        }} />
+                    <div style={{ marginTop: 'auto', paddingTop: '16px', display: 'flex', flexDirection: 'column', gap: '10px' }}>
+                        {auth.wallet && (
+                            <p style={{
+                                color: 'rgba(245,236,215,0.75)',
+                                fontSize: '11px',
+                                lineHeight: 1.4,
+                                wordBreak: 'break-all',
+                            }}>
+                                Connected: {shortenAddress(auth.wallet)}
+                            </p>
+                        )}
+                        <button
+                            type="button"
+                            disabled={loggingOut}
+                            onClick={async () => {
+                                setLoggingOut(true);
+                                try {
+                                    await logoutWallet();
+                                } catch {
+                                    setLoggingOut(false);
+                                }
+                            }}
+                            style={{
+                                background: 'rgba(245,236,215,0.12)',
+                                border: '1px solid rgba(245,236,215,0.35)',
+                                borderRadius: '8px',
+                                padding: '8px 10px',
+                                color: C.cream,
+                                fontSize: '12px',
+                                fontWeight: 600,
+                                cursor: loggingOut ? 'wait' : 'pointer',
+                            }}
+                        >
+                            {loggingOut ? 'Disconnecting…' : 'Disconnect wallet'}
+                        </button>
                     </div>
                 </div>
 
@@ -256,7 +302,7 @@ export default function Chat({ mode: initialMode }: Props) {
                                     color: C.muted, fontSize: '13px',
                                     textAlign: 'center', maxWidth: '200px', lineHeight: 1.5,
                                 }}>
-                                    Ceritakan apa yang sedang kamu rasakan atau butuhkan
+                                    Share what you&apos;re feeling or what you need help with
                                 </p>
                             </div>
                         )}
@@ -299,7 +345,7 @@ export default function Chat({ mode: initialMode }: Props) {
                             value={input}
                             onChange={e => setInput(e.target.value)}
                             onKeyDown={handleKeyDown}
-                            placeholder="Masukkan teks..."
+                            placeholder="Type a message..."
                             rows={1}
                             style={{
                                 flex: 1, background: C.inputBg,

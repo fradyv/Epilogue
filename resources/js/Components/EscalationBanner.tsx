@@ -13,14 +13,14 @@ interface Contact {
 export default function EscalationBanner({ mode }: Props) {
     const contacts: Record<ModeId, Contact | null> = {
         resilience: {
-            label: 'Konselor Kesehatan Mental',
+            label: 'Mental health counselor',
             hotline: '119 ext 8',
-            desc: 'Into The Light Indonesia — tersedia 24 jam',
+            desc: 'Into The Light Indonesia — available 24/7',
         },
         safety: {
-            label: 'Unit Pengaduan Kampus',
-            hotline: 'Hubungi BEM / Dosen Wali',
-            desc: 'Laporan bisa disampaikan secara anonim',
+            label: 'Campus reporting unit',
+            hotline: 'Contact student affairs or your academic advisor',
+            desc: 'Reports can be submitted anonymously',
         },
         productivity: null,
     };
@@ -46,7 +46,7 @@ export default function EscalationBanner({ mode }: Props) {
                     fontFamily: "'DM Sans', sans-serif",
                     fontWeight: 600, fontSize: '13px', margin: '0 0 4px',
                 }}>
-                    Kami mendeteksi kamu mungkin butuh bantuan lebih lanjut.
+                    We noticed you may need additional support.
                 </p>
                 <p style={{
                     color: '#E8C4A0',

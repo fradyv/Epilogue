@@ -1,16 +1,25 @@
 <?php
 
+use App\Http\Controllers\ChatController;
+use App\Http\Controllers\WalletAuthController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/', fn () => inertia('Landing'));
 
-Route::get('/chat', fn () => inertia('Chat'));
+Route::post('/auth/wallet', [WalletAuthController::class, 'store']);
+Route::post('/auth/logout', [WalletAuthController::class, 'destroy'])->middleware('auth');
 
-Route::get('/chat/{mode}', function ($mode) {
-    $allowed = ['resilience', 'productivity', 'safety'];
-    if (! in_array($mode, $allowed)) {
-        abort(404);
-    }
+Route::middleware('auth')->group(function () {
+    Route::get('/chat', fn () => inertia('Chat'));
 
-    return inertia('Chat', ['mode' => $mode]);
+    Route::get('/chat/{mode}', function ($mode) {
+        $allowed = ['resilience', 'productivity', 'safety'];
+        if (! in_array($mode, $allowed)) {
+            abort(404);
+        }
+
+        return inertia('Chat', ['mode' => $mode]);
+    });
+
+    Route::post('/chat/send', [ChatController::class, 'send']);
 });
