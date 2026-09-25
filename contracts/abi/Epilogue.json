@@ -1,0 +1,206 @@
+[
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "minter",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "category",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "contentHash",
+          "type": "string"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "AdviceMinted",
+      "type": "event"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "reportHash",
+          "type": "string"
+        },
+        {
+          "internalType": "bool",
+          "name": "isAnonymous",
+          "type": "bool"
+        }
+      ],
+      "name": "logSafetyReport",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "string",
+          "name": "category",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "contentHash",
+          "type": "string"
+        }
+      ],
+      "name": "mintAdvice",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "anonymous": false,
+      "inputs": [
+        {
+          "indexed": true,
+          "internalType": "address",
+          "name": "reporter",
+          "type": "address"
+        },
+        {
+          "indexed": false,
+          "internalType": "string",
+          "name": "reportHash",
+          "type": "string"
+        },
+        {
+          "indexed": false,
+          "internalType": "bool",
+          "name": "isAnonymous",
+          "type": "bool"
+        },
+        {
+          "indexed": true,
+          "internalType": "uint256",
+          "name": "recordId",
+          "type": "uint256"
+        },
+        {
+          "indexed": false,
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "name": "SafetyReportLogged",
+      "type": "event"
+    },
+    {
+      "inputs": [],
+      "name": "adviceCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "getAdviceRecord",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "minter",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "category",
+          "type": "string"
+        },
+        {
+          "internalType": "string",
+          "name": "contentHash",
+          "type": "string"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "uint256",
+          "name": "id",
+          "type": "uint256"
+        }
+      ],
+      "name": "getSafetyReport",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "reporter",
+          "type": "address"
+        },
+        {
+          "internalType": "string",
+          "name": "reportHash",
+          "type": "string"
+        },
+        {
+          "internalType": "bool",
+          "name": "isAnonymous",
+          "type": "bool"
+        },
+        {
+          "internalType": "uint256",
+          "name": "timestamp",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [],
+      "name": "safetyReportCount",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    }
+  ]
