@@ -41,7 +41,7 @@ COPY . .
 RUN composer dump-autoload --optimize --no-dev
 
 # --- Production image (Nginx + PHP-FPM 8.4) ---
-FROM ghcr.io/server-side-up/php:8.4-fpm-nginx
+FROM ghcr.io/serversideup/php:8.4-fpm-nginx
 
 WORKDIR /var/www/html
 
