@@ -3,10 +3,10 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Campus Resilience Bot</title>
+    <title>Epilogue</title>
     <style>
         *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-        html, body, #app { height: 100%; background: #6B3A10; }
+        html, body, #app { min-height: 100%; background: #FCECD8; }
     </style>
     @viteReactRefresh
     @vite(['resources/css/app.css', 'resources/js/app.tsx'])

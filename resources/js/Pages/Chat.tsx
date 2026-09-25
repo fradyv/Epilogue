@@ -164,7 +164,7 @@ export default function Chat({ mode: initialMode }: Props) {
                             color: C.cream, fontSize: '18px',
                             fontWeight: 600, lineHeight: 1.3, marginBottom: '4px',
                         }}>
-                            Campus<br />Resilience Bot
+                            Epilogue
                         </p>
                         <p style={{ color: C.olive, fontSize: '11px' }}>
                             Pilih mode bantuan
