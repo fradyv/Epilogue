@@ -13,7 +13,8 @@
         "strict": true,
         "types": ["vite/client"],
         "paths": {
-            "@/*": ["./resources/js/*"]
+            "@/*": ["./resources/js/*"],
+            "@contracts/*": ["./contracts/*"]
         }
     },
     "include": ["resources/js/**/*"]

@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { usePage } from '@inertiajs/react';
 import EscalationBanner from '@/Components/EscalationBanner.tsx';
+import MintAdviceButton from '@/Components/MintAdviceButton.tsx';
 import { postJson } from '@/lib/http.ts';
 import { logoutWallet, shortenAddress } from '@/lib/walletAuth.ts';
 
@@ -33,8 +34,9 @@ interface Props {
     mode?: ModeId;
 }
 
-function Bubble({ msg }: { msg: Message }) {
+function Bubble({ msg, mode }: { msg: Message; mode: ModeId }) {
     const isUser = msg.role === 'user';
+    const showMint = !isUser && (mode === 'resilience' || mode === 'productivity');
     return (
         <div style={{ display: 'flex', justifyContent: isUser ? 'flex-end' : 'flex-start', marginBottom: '10px' }}>
             {!isUser && (
@@ -57,6 +59,9 @@ function Bubble({ msg }: { msg: Message }) {
                 boxShadow: '0 1px 3px rgba(0,0,0,0.08)',
             }}>
                 {msg.content}
+                {showMint && (
+                    <MintAdviceButton category={mode} content={msg.content} />
+                )}
             </div>
             {isUser && (
                 <div style={{
@@ -81,6 +86,11 @@ export default function Chat({ mode: initialMode }: Props) {
     const bottomRef = useRef<HTMLDivElement>(null);
 
     const currentMode = MODES.find(m => m.id === activeMode);
+
+    const safetyReportText = messages
+        .filter(m => m.role === 'user')
+        .map(m => m.content)
+        .join('\n\n');
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: 'smooth' });
@@ -289,7 +299,12 @@ export default function Chat({ mode: initialMode }: Props) {
 
                     {/* Messages */}
                     <div style={{ flex: 1, overflowY: 'auto', padding: '20px 24px' }}>
-                        {escalate && <EscalationBanner mode={activeMode} />}
+                        {escalate && (
+                            <EscalationBanner
+                                mode={activeMode}
+                                reportText={activeMode === 'safety' ? safetyReportText : undefined}
+                            />
+                        )}
 
                         {messages.length === 0 && !loading && (
                             <div style={{
@@ -307,7 +322,7 @@ export default function Chat({ mode: initialMode }: Props) {
                             </div>
                         )}
 
-                        {messages.map((msg, i) => <Bubble key={i} msg={msg} />)}
+                        {messages.map((msg, i) => <Bubble key={i} msg={msg} mode={activeMode} />)}
 
                         {loading && (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>

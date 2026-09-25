@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\SafetyReportController;
 use App\Http\Controllers\WalletAuthController;
 use Illuminate\Support\Facades\Route;
 
@@ -22,4 +23,5 @@ Route::middleware('auth')->group(function () {
     });
 
     Route::post('/chat/send', [ChatController::class, 'send']);
+    Route::post('/safety/hash', [SafetyReportController::class, 'hash']);
 });

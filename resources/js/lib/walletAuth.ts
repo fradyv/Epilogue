@@ -1,4 +1,5 @@
 import { router } from '@inertiajs/react';
+import { ensureBotChain } from '@/lib/botChain.ts';
 import { postJson } from '@/lib/http.ts';
 
 declare global {
@@ -26,6 +27,12 @@ export async function connectWalletAndLogin(redirectTo = '/chat'): Promise<strin
     const address = accounts[0];
     if (!address) {
         throw new Error('No wallet account selected.');
+    }
+
+    try {
+        await ensureBotChain();
+    } catch {
+        // Wallet login still works if user switches network later for on-chain actions.
     }
 
     const response = await postJson('/auth/wallet', { wallet_address: address });
