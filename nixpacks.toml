@@ -1,0 +1,12 @@
+# Railway (Nixpacks): requires PHP 8.4+ — see .php-version and composer.lock
+[variables]
+NIXPACKS_PHP_VERSION = "8.4"
+
+[phases.install]
+cmds = [
+    "composer install --no-dev --optimize-autoloader --no-interaction",
+    "npm ci && npm run build",
+]
+
+[start]
+cmd = "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=$PORT"
