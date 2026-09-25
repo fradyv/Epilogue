@@ -1,58 +1,103 @@
-<p align="center"><a href="https://laravel.com" target="_blank"><img src="https://raw.githubusercontent.com/laravel/art/master/logo-lockup/5%20SVG/2%20CMYK/1%20Full%20Color/laravel-logolockup-cmyk-red.svg" width="400" alt="Laravel Logo"></a></p>
+# Epilogue
 
-<p align="center">
-<a href="https://github.com/laravel/framework/actions"><img src="https://github.com/laravel/framework/workflows/tests/badge.svg" alt="Build Status"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/dt/laravel/framework" alt="Total Downloads"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/v/laravel/framework" alt="Latest Stable Version"></a>
-<a href="https://packagist.org/packages/laravel/framework"><img src="https://img.shields.io/packagist/l/laravel/framework" alt="License"></a>
-</p>
+Epilogue is a decentralized web app (DApp) for university students. It combines an AI companion powered by Google Gemini with optional on-chain records on **BOT Chain**. Students can talk through three support modes—mental resilience, productivity coaching, and safety reporting without an email or password account. Sign in uses MetaMask, sensitive report text is never written to the blockchain only cryptographic hashes are stored on-chain as tamper-evident anchors.
 
-## About Laravel
+Built for **Girl Meets Tech: Build Week Hackathon Vol.2** (AI Advice Bot track).
 
-Laravel is a web application framework with expressive, elegant syntax. We believe development must be an enjoyable and creative experience to be truly fulfilling. Laravel takes the pain out of development by easing common tasks used in many web projects, such as:
+## What it does
 
-- [Simple, fast routing engine](https://laravel.com/docs/routing).
-- [Powerful dependency injection container](https://laravel.com/docs/container).
-- Multiple back-ends for [session](https://laravel.com/docs/session) and [cache](https://laravel.com/docs/cache) storage.
-- Expressive, intuitive [database ORM](https://laravel.com/docs/eloquent).
-- Database agnostic [schema migrations](https://laravel.com/docs/migrations).
-- [Robust background job processing](https://laravel.com/docs/queues).
-- [Real-time event broadcasting](https://laravel.com/docs/broadcasting).
+- **Landing page** — Introduces Epilogue, Herlambang, and how Web3 login works.
+- **Wallet login** — Connect MetaMask; Laravel creates a session from your wallet address.
+- **AI chat (3 modes)**
+  - **Resilience** — CBT style support for imposter syndrome, burnout, and academic stress.
+  - **Productivity** — Study planning and time blocking coaching.
+  - **Safety** — Trauma informed support for bullying, harassment, and campus safety concerns.
+- **Crisis escalation** — When the AI detects a crisis, a banner shows hotline and campus reporting guidance.
+- **On-chain features (BOT Chain)**
+  - **Safety:** `logSafetyReport(reportHash, anonymous)` — Laravel SHA-256 hashes your report text; you submit only the hash via MetaMask.
+  - **Resilience / Productivity (optional):** `mintAdvice(category, contentHash)` — Mint a hash of an AI reply as an on chain record.
 
-Laravel is accessible, powerful, and provides tools required for large, robust applications.
+Smart contract source: [`contracts/EpilogueRegistry.sol`](contracts/EpilogueRegistry.sol). ABI: [`contracts/abi/Epilogue.json`](contracts/abi/Epilogue.json).
 
-## Learning Laravel
+## How to use the app (end users)
 
-Laravel has the most extensive and thorough [documentation](https://laravel.com/docs) and video tutorial library of all modern web application frameworks, making it a breeze to get started with the framework.
+1. Open the site and click **Connect Wallet** (MetaMask or any Web3 wallet).
+2. Approve connection and, if prompted, switch to **BOT Chain** (testnet or mainnet, depending on deployment).
+3. Enter **Chat** and choose a mode.
+4. Type your message and send, the AI replies in English with conversation context.
+5. **Safety mode + crisis:** If the escalation banner appears, read the hotline info. To anchor a report on-chain, click **Log report on-chain (anonymous)** and confirm the transaction in your Web3 wallet. Only a hash is stored on chain, **not your full message text**.
+6. **Resilience / Productivity:** Optionally use **Mint this advice on-chain** under an AI message to record a hash of that advice.
 
-In addition, [Laracasts](https://laracasts.com) contains thousands of video tutorials on a range of topics including Laravel, modern PHP, unit testing, and JavaScript. Boost your skills by digging into our comprehensive video library.
+## Local development
 
-You can also watch bite-sized lessons with real-world projects on [Laravel Learn](https://laravel.com/learn), where you will be guided through building a Laravel application from scratch while learning PHP fundamentals.
+### Requirements
 
-## Agentic Development
+- PHP 8.2+, Composer, Node.js 18+, npm
+- MySQL or SQLite (configure in `.env`)
+- [MetaMask](https://metamask.io/) browser extension (or any Web3 wallet extension you have)
+- Google Gemini API key
 
-Laravel's predictable structure and conventions make it ideal for AI coding agents like Claude Code, Cursor, and GitHub Copilot. Install [Laravel Boost](https://laravel.com/docs/ai) to supercharge your AI workflow:
+### Setup
 
 ```bash
-composer require laravel/boost --dev
-
-php artisan boost:install
+composer install
+cp .env.example .env
+php artisan key:generate
 ```
 
-Boost provides your agent 15+ tools and skills that help agents build Laravel applications while following best practices.
+Configure `.env`:
 
-## Contributing
+- `GEMINI_API_KEY` — from Google AI Studio
+- Database (`DB_*`) if using MySQL
+- BOT Chain / contract (for frontend builds):
 
-Thank you for considering contributing to the Laravel framework! The contribution guide can be found in the [Laravel documentation](https://laravel.com/docs/contributions).
+```env
+VITE_BOT_CHAIN_ID=968          # or 677 for mainnet
+VITE_BOT_CHAIN_RPC=https://rpc.bohr.life   # or https://rpc.botchain.ai for mainnet
+VITE_EPILOGUE_CONTRACT=0x...   # your deployed EpilogueRegistry address
+```
 
-## Code of Conduct
+```bash
+php artisan migrate
+npm install
+npm run dev
+php artisan serve
+```
 
-In order to ensure that the Laravel community is welcoming to all, please review and abide by the [Code of Conduct](https://laravel.com/docs/contributions#code-of-conduct).
+Visit `http://localhost:8000`. Restart `npm run dev` after changing any `VITE_*` variable.
 
-## Security Vulnerabilities
+### Deploy contract (Remix)
 
-If you discover a security vulnerability within Laravel, please send an e-mail to Taylor Otwell via [taylor@laravel.com](mailto:taylor@laravel.com). All security vulnerabilities will be promptly addressed.
+1. Open [`contracts/EpilogueRegistry.sol`](contracts/EpilogueRegistry.sol) in [Remix IDE](https://remix.ethereum.org/).
+2. Compile with Solidity **0.8.20+**.
+3. Deploy with **Injected Provider (MetaMask)** on BOT Chain testnet (968) or mainnet (677).
+4. Copy the contract address into `VITE_EPILOGUE_CONTRACT` and rebuild the frontend.
+
+Explorers: [Bohr testnet scan](https://scan.bohr.life) · [BOT mainnet scan](https://scan.botchain.ai)
+
+
+### EpilogueRegistry contract addresses
+
+Contract name: **`EpilogueRegistry`** (see `contracts/EpilogueRegistry.sol`).
+
+| Network | Chain ID | RPC | Contract address |
+|--------|----------|-----|------------------|
+| BOT Chain Testnet (Bohr) | 968 | `https://rpc.bohr.life` | `0x1615AA1688FE267A70D31726832cA29c2374f2c2` |
+| BOT Chain Mainnet | 677 | `https://rpc.botchain.ai` | `0x4Fbdd660BE9Ab2825e06B7Af8eACd86bdcB5fC6A` |
+
+Verify on explorers:
+
+- Testnet: `https://scan.bohr.life/address/0x1615AA1688FE267A70D31726832cA29c2374f2c2`
+- Mainnet: [https://scan.botchain.ai/address/0x4Fbdd660BE9Ab2825e06B7Af8eACd86bdcB5fC6A](https://scan.botchain.ai/address/0x4Fbdd660BE9Ab2825e06B7Af8eACd86bdcB5fC6A)
+
+
+## Project structure (high level)
+
+- `app/Http/Controllers/` — Chat, wallet auth, safety report hashing
+- `resources/js/Pages/` — Landing and Chat (Inertia + React)
+- `routes/web.php` — Web routes, auth, chat API
+- `contracts/` — Solidity and ABI for judges and frontend
 
 ## License
 
-The Laravel framework is open-sourced software licensed under the [MIT license](https://opensource.org/licenses/MIT).
+MIT (application code). Smart contract: SPDX-License-Identifier MIT in `EpilogueRegistry.sol`.
