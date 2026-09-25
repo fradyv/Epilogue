@@ -55,8 +55,5 @@ ENV SSL_MODE=off \
     AUTORUN_LARAVEL_VIEW_CACHE=true \
     AUTORUN_LARAVEL_EVENT_CACHE=true
 
-COPY --from=vendor /app /var/www/html
-COPY --from=assets /app/public/build /var/www/html/public/build
-
-RUN chown -R www-data:www-data storage bootstrap/cache \
-    && chmod -R ug+rwx storage bootstrap/cache
+COPY --from=vendor --chown=www-data:www-data /app /var/www/html
+COPY --from=assets --chown=www-data:www-data /app/public/build /var/www/html/public/build
