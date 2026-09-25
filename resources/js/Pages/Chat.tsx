@@ -34,18 +34,30 @@ interface Props {
     mode?: ModeId;
 }
 
+function AiAvatar({ style }: { style?: React.CSSProperties }) {
+    return (
+        <img
+            src="/images/logo-2.png"
+            alt=""
+            style={{
+                width: 32,
+                height: 32,
+                borderRadius: '50%',
+                objectFit: 'cover',
+                flexShrink: 0,
+                ...style,
+            }}
+        />
+    );
+}
+
 function Bubble({ msg, mode }: { msg: Message; mode: ModeId }) {
     const isUser = msg.role === 'user';
     const showMint = !isUser && (mode === 'resilience' || mode === 'productivity');
     return (
         <div style={{ display: 'flex', justifyContent: isUser ? 'flex-end' : 'flex-start', marginBottom: '10px' }}>
             {!isUser && (
-                <div style={{
-                    width: 32, height: 32, borderRadius: '50%',
-                    background: C.darkOlive, display: 'flex',
-                    alignItems: 'center', justifyContent: 'center',
-                    fontSize: '14px', flexShrink: 0, marginRight: '8px', alignSelf: 'flex-end',
-                }}>🤖</div>
+                <AiAvatar style={{ marginRight: '8px', alignSelf: 'flex-end' }} />
             )}
             <div style={{
                 maxWidth: '68%',
@@ -326,11 +338,7 @@ export default function Chat({ mode: initialMode }: Props) {
 
                         {loading && (
                             <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '10px' }}>
-                                <div style={{
-                                    width: 32, height: 32, borderRadius: '50%',
-                                    background: C.darkOlive, display: 'flex',
-                                    alignItems: 'center', justifyContent: 'center', fontSize: '14px',
-                                }}>🤖</div>
+                                <AiAvatar />
                                 <div style={{
                                     background: C.aiBubble,
                                     borderRadius: '16px 16px 16px 4px',
