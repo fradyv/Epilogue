@@ -81,6 +81,23 @@ Visit `http://localhost:8000`. Restart `npm run dev` after changing any `VITE_*`
 
 Nixpacks runs `composer install --no-dev`, `npm ci && npm run build`, then starts with migrations + `php artisan serve`.
 
+### Render (Docker)
+
+Laravel on Render uses the **Docker** runtime (see [`Dockerfile`](Dockerfile)).
+
+1. **New → Web Service** → connect this repo.
+2. **Runtime:** Docker (Render detects `Dockerfile` automatically).
+3. Add **PostgreSQL**; link `DATABASE_URL` to the web service.
+4. Set **Environment** variables (mark `VITE_*` as available at **build** time if Render asks):
+   - `APP_KEY`, `APP_ENV=production`, `APP_DEBUG=false`
+   - `APP_URL=https://your-service.onrender.com`
+   - `GEMINI_API_KEY`
+   - `DB_CONNECTION=pgsql` (or rely on `DATABASE_URL` parsing)
+   - `VITE_BOT_CHAIN_ID`, `VITE_BOT_CHAIN_RPC`, `VITE_EPILOGUE_CONTRACT`
+5. Deploy. The image runs Nginx + PHP 8.4, caches Laravel config, and runs migrations on startup.
+
+Local test: `docker build -t epilogue .` then run with `-e APP_KEY=...` and database env (see Render docs).
+
 ### Deploy contract (Remix)
 
 1. Open [`contracts/EpilogueRegistry.sol`](contracts/EpilogueRegistry.sol) in [Remix IDE](https://remix.ethereum.org/).
