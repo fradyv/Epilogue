@@ -1,6 +1,6 @@
 # Epilogue
 
-Epilogue is a decentralized web app (DApp) for university students. It combines an AI companion powered by Google Gemini with optional on-chain records on **BOT Chain**. Students can talk through three support modes—mental resilience, productivity coaching, and safety reporting without an email or password account. Sign in uses MetaMask, sensitive report text is never written to the blockchain only cryptographic hashes are stored on-chain as tamper-evident anchors.
+Epilogue is a decentralized web app (DApp) for students. It combines an AI companion powered by Google Gemini with optional on-chain records on **BOT Chain**. Students can talk through three support modes—mental resilience, productivity coaching, and safety reporting without an email or password account. Sign in uses MetaMask, sensitive report text is never written to the blockchain only cryptographic hashes are stored on-chain as tamper-evident anchors.
 
 Built for **Girl Meets Tech: Build Week Hackathon Vol.2** (AI Advice Bot track).
 
